@@ -1,7 +1,8 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jstl/core" %>
 
 <html>
 <head>
-	<jsp:include page="include.jsp" />
   	<link rel="stylesheet" href="/style.css" type="text/css"></link>
 </head>
 <body>
@@ -42,9 +43,7 @@
 					<th>Hours</th>
 					<th>Portion of day</th>
 				</tr>
-
-				<c:forEach items="${model.timeSheetEntries}" var="i"
-					varStatus="itemsRow">
+				<c:forEach items="${model.timeSheetEntries}" var="i" varStatus="itemsRow">
 					<tr>
 						<td><input type="text"
 							name="timeSheetEntries[${itemsRow.index}].date" /></td>
@@ -61,5 +60,6 @@
 		</form>
 	</div>
 
+	<%@ include file="userdetails.jsp" %>
 </body>
 </html>
