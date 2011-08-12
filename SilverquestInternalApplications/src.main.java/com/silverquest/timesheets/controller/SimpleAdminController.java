@@ -55,7 +55,7 @@ public class SimpleAdminController extends MultiActionController implements
 			HttpServletResponse response) throws ServletException, IOException {
 
 		String now = (new Date()).toString();
-		System.out.println("Returning hello view with " + now);
+		System.out.println("/simple-admin/intro Returning hello view with " + now);
 
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("now", now);

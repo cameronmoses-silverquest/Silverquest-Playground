@@ -37,6 +37,7 @@ public class TimeSheetController extends MultiActionController implements
 
 	@Autowired
 	private TimeSheetService timeSheetService;
+	
 	@Autowired
 	private CompanyService companyService;
 
@@ -47,7 +48,10 @@ public class TimeSheetController extends MultiActionController implements
 	public ModelAndView intro(HttpServletRequest request,
 			HttpServletResponse response, TimeSheetCommand command)
 			throws ServletException, IOException {
-
+		
+		String now = (new Date()).toString();
+		System.out.println("/timesheets/intro.htm Returning hello view with " + now);
+		
 		Map<String, Object> model = new HashMap<String, Object>();
 
 		model = referenceData(model);
