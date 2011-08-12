@@ -7,9 +7,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
+
 import com.silverquest.timesheets.command.CreateConsultantCommand;
 import com.silverquest.timesheets.dto.AppUserDto;
 import com.silverquest.timesheets.dto.CompanyDto;
@@ -32,42 +37,40 @@ import com.silverquest.timesheets.service.TimeSheetService;
 import com.silverquest.timesheets.service.util.CSVDataUploaderUtil;
 
 @Controller
-public class SimpleAdminController extends MultiActionController implements
-		InitializingBean {
+public class SimpleAdminController extends MultiActionController implements InitializingBean {
 
-	@Autowired
-	private ConsultantService consultantService;
-	@Autowired 
-	private CompanyService companyService;
-	@Autowired
-	private AppUserService appUserService;
+	private static final Logger logger = Logger.getLogger(SimpleAdminController.class.getName());
 	
 	@Autowired
-	private ConsultantAssignmentService consultantAssigmentService;
+	private ConsultantService consultantService;
+
 	@Autowired
-	CSVDataUploaderUtil csvDataUploaderUtil;
+	private CompanyService companyService;
+
+	@Autowired
+	private AppUserService appUserService;
+
+	@Autowired
+	private ConsultantAssignmentService consultantAssigmentService;
+
 	@Autowired
 	private TimeSheetService timeSheetService;
 
+	@Autowired
+	CSVDataUploaderUtil csvDataUploaderUtil;
 
 	@RequestMapping("/simple-admin/intro")
-	public ModelAndView intro(HttpServletRequest request,
-			HttpServletResponse response) throws ServletException, IOException {
-
+	public ModelAndView intro(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String now = (new Date()).toString();
-		System.out.println("/simple-admin/intro Returning hello view with " + now);
+		logger.log(Level.INFO, "/simple-admin/intro Returning hello view with " + now);
 
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put("now", now);
-		
-		
 		model.put("clientCompanies",  companyService.findCompaniesByType(CompanyType.CLIENT.toString()));
 
 		List<AppUserDto> consultants = appUserService.findParentEmployees();
 		model.put("consultants", consultants);
-		
 		model.put("clientCompanies",  companyService.findCompaniesByType(CompanyType.CLIENT.toString()));
-		
 		
 		request.setAttribute("model", model);
 		return new ModelAndView("simple-admin-view", model);
@@ -102,32 +105,24 @@ public class SimpleAdminController extends MultiActionController implements
 	*/
 	
 	@RequestMapping("/simple-admin/saveAssignment.htm")
-	public ModelAndView saveAssignment(HttpServletRequest request,
-			HttpServletResponse response, ConsultantAssignmentDto command)
+	public ModelAndView saveAssignment(HttpServletRequest request, HttpServletResponse response, ConsultantAssignmentDto command)
 			throws ServletException, IOException {
-
 
 		command = consultantAssigmentService.save(command);
 
 		Map<String, Object> model = new HashMap<String, Object>();
-
 		model.put("message", "Saved");
-		
-		
 		model.put("assingmentId", command.getId());
 		request.setAttribute("model", model);
 		return new ModelAndView("simple-admin-view", model);
 	}
 	
-
 	@RequestMapping("/simple-admin/saveconsultant.htm")
-	public ModelAndView saveconsultant(HttpServletRequest request,
-			HttpServletResponse response, CreateConsultantCommand command)
+	public ModelAndView saveconsultant(HttpServletRequest request, HttpServletResponse response, CreateConsultantCommand command)
 			throws ServletException, IOException {
 
 		if (command != null) {
-			System.out.println("Name: " + command.getFirstName() + ", "
-					+ command.getLastName());
+			logger.log(Level.INFO, "Name: " + command.getFirstName() + ", " + command.getLastName());
 		}
 
 		consultantService.saveConsultant(command);
@@ -138,24 +133,17 @@ public class SimpleAdminController extends MultiActionController implements
 		return new ModelAndView("simple-admin-view", model);
 	}
 	
-	
 	@RequestMapping("/simple-admin/savecompany.htm")
-	public ModelAndView savecompany(HttpServletRequest request,
-			HttpServletResponse response, CompanyDto command)
+	public ModelAndView savecompany(HttpServletRequest request, HttpServletResponse response, CompanyDto command)
 			throws ServletException, IOException {
 
-		// / NB - TEST THIS !!!!!!!!!!!!!!!!!!
+		//TODO: NB - TEST THIS !!!!!!!!!!!!!!!!!!
 		companyService.save(command);
-
 		Map<String, Object> model = new HashMap<String, Object>();
-
 		model.put("message", "Saved");
 		request.setAttribute("model", model);
 		return new ModelAndView("simple-admin-view", model);
 	}
-	
-
-	
 
 	public ConsultantService getConsultantService() {
 		return consultantService;
@@ -172,24 +160,20 @@ public class SimpleAdminController extends MultiActionController implements
 		binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
 	}
 	
-	
-
-
 	@Override
 	public void afterPropertiesSet() throws Exception {
-
 		if (consultantService == null) {
-			System.out.println("ERROR -  consultantService is null");
+			logger.log(Level.WARNING, "ERROR -  consultantService is null");
 		} else {
-			System.out
-					.println("ConsultantService is fine from SimpleAdminController");
+			logger.log(Level.INFO, "ConsultantService is fine from SimpleAdminController");
 		}
 
 		if (csvDataUploaderUtil == null) {
-			System.out.println("ERROR !!!! -  csvDataUploaderUtil is null");
+			logger.log(Level.WARNING, "ERROR !!!! -  csvDataUploaderUtil is null");
 		}
+		
 		if( companyService == null ){
-			System.out.println("CompanyService is null from SimpleAdminController");
+			logger.log(Level.INFO, "CompanyService is null from SimpleAdminController");
 		}
 	}
 
@@ -213,7 +197,6 @@ public class SimpleAdminController extends MultiActionController implements
 		return appUserService;
 	}
 
-
 	public void setAppUserService(AppUserService appUserService) {
 		this.appUserService = appUserService;
 	}
@@ -221,7 +204,6 @@ public class SimpleAdminController extends MultiActionController implements
 	public ConsultantAssignmentService getConsultantAssigmentService() {
 		return consultantAssigmentService;
 	}
-
 
 	public void setConsultantAssigmentService(
 			ConsultantAssignmentService consultantAssigmentService) {
@@ -232,9 +214,7 @@ public class SimpleAdminController extends MultiActionController implements
 		return timeSheetService;
 	}
 
-
 	public void setTimeSheetService(TimeSheetService timeSheetService) {
 		this.timeSheetService = timeSheetService;
 	}
-
 }
