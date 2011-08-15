@@ -7,8 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -25,11 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 import com.silverquest.timesheets.command.TimeSheetCommand;
-import com.silverquest.timesheets.dto.AppUserDto;
 import com.silverquest.timesheets.dto.AddressDto;
-import com.silverquest.timesheets.dto.CompanyDetailsDto;
-import com.silverquest.timesheets.dto.CompanyType;
-import com.silverquest.timesheets.dto.TimeSheetEntryDto;
 import com.silverquest.timesheets.dto.TimeSheetTemplate;
 import com.silverquest.timesheets.service.AppUserService;
 import com.silverquest.timesheets.service.CompanyService;
@@ -37,33 +31,39 @@ import com.silverquest.timesheets.service.ConsultantAssignmentService;
 import com.silverquest.timesheets.service.TimeSheetService;
 
 @Controller
-public class TimeSheetController extends MultiActionController implements InitializingBean {
-	
-	private static final Logger logger = Logger.getLogger(TimeSheetController.class.getName());
-	
+public class TimeSheetController extends MultiActionController implements
+		InitializingBean {
+
 	@Autowired
 	private TimeSheetService timeSheetService;
-	
 	@Autowired
 	private CompanyService companyService;
+	
+	@Autowired 
+	private ConsultantAssignmentService consultantAssignmentService;
 
 	@Autowired
 	private AppUserService appUserService;
+	
+	public static String testUser = "jkim1";
+	
+	private enum Method{ INTRO, CREATE_NEW };
 
 	@RequestMapping("/timesheets/intro.htm")
-	public ModelAndView intro(HttpServletRequest request, HttpServletResponse response, TimeSheetCommand command)
+	public ModelAndView intro(HttpServletRequest request,
+			HttpServletResponse response, TimeSheetCommand command)
 			throws ServletException, IOException {
-		
-		String now = (new Date()).toString();
-		logger.log(Level.INFO, "/timesheets/intro.htm Returning hello view with " + now);
-		
+
 		Map<String, Object> model = new HashMap<String, Object>();
+
 		model = referenceData(model, command.getIsNew(), Method.INTRO);
+
 		model.put("message", "Saved");
 		
 		model.put("userName", testUser);
 		
 		request.setAttribute("model", model);
+		
 		return new ModelAndView("time-sheet-extjs-view", model);
 
 	}
@@ -88,17 +88,20 @@ public class TimeSheetController extends MultiActionController implements Initia
 		}
 
 		return model;
+
 	}
 
 	@RequestMapping("/timesheets/createNewTimeSheet.htm")
-	public ModelAndView createNewTimeSheet(HttpServletRequest request, HttpServletResponse response, TimeSheetCommand command)
+	public ModelAndView createNewTimeSheet(HttpServletRequest request,
+			HttpServletResponse response, TimeSheetCommand command)
 			throws ServletException, IOException {
 
 		// save the time sheet
 		timeSheetService.save(command);
 
 		Map<String, Object> model = new HashMap<String, Object>();
-		//model = referenceData(model, command..CREATE_NEW);
+		
+	//	model = referenceData(model, command..CREATE_NEW);
 
 		model.put("message", "Saved");
 		request.setAttribute("model", model);
@@ -117,18 +120,21 @@ public class TimeSheetController extends MultiActionController implements Initia
 	public void afterPropertiesSet() throws Exception {
 
 		if (timeSheetService == null) {
-			logger.log(Level.INFO, "TimeSheet is null from TimeSheetController");
+			System.out.println("TimeSheet is null from TimeSheetController");
 		} else {
-			logger.log(Level.INFO, "TimeSheet is fine from TimeSheetController");
+			System.out.println("TimeSheet is fine from TimeSheetController");
 		}
 
 	}
 
-	protected void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) {
+	protected void initBinder(HttpServletRequest request,
+			ServletRequestDataBinder binder) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		dateFormat.setLenient(true);
-		binder.registerCustomEditor(Date.class, new CustomDateEditor(dateFormat, true));
-		binder.registerCustomEditor(String.class, new StringTrimmerEditor(false));
+		binder.registerCustomEditor(Date.class, new CustomDateEditor(
+				dateFormat, true));
+		binder.registerCustomEditor(String.class,
+				new StringTrimmerEditor(false));
 	}
 
 	public CompanyService getCompanyService() {

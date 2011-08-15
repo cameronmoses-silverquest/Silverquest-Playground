@@ -4,61 +4,67 @@
 
 <beans>
 
-	<bean id="consultantAssignmentJdoService"
+
+	<bean id="consultantContractJdoService"
 		class="com.silverquest.timesheets.jdo.service.impl.ConsultantAssignmentJdoServiceImpl" />
 
 	<bean id="consultantJdoService"
-		class="com.silverquest.timesheets.jdo.service.impl.ConsultantJdoServiceImpl" />
+		class="com.silverquest.timesheets.jdo.service.impl.ConsultantJdoServiceImpl">
+	</bean>
 
 	<bean id="consultantService"
 		class="com.silverquest.timesheets.service.impl.ConsultantServiceImpl"
 		parent="consultantJdoService" />
 
-	<bean id="companyJdoService"
-		class="com.silverquest.timesheets.jdo.service.impl.CompanyJdoServiceImpl">
-		<property name="appUserJdoService">
-			<ref bean="appUserJdoService" />
-		</property>
+	<bean id="companyJdoService" class="com.silverquest.timesheets.jdo.service.impl.CompanyJdoServiceImpl">
+	  <property name="appUserJdoService">
+	     <ref bean="appUserJdoService"/>
+	  </property>
+	</bean>
+	
+	
+	<bean id="appUserJdoService" class="com.silverquest.timesheets.jdo.service.impl.AppUserJdoServiceImpl">
 	</bean>
 
-	<bean id="appUserJdoService"
-		class="com.silverquest.timesheets.jdo.service.impl.AppUserJdoServiceImpl" />
-
-	<bean id="appUserService"
-		class="com.silverquest.timesheets.service.impl.AppUserServiceImpl"
-		parent="appUserJdoService">
-		<property name="companyService">
-			<ref bean="companyService" />
-		</property>
+	<bean id="appUserService" class="com.silverquest.timesheets.service.impl.AppUserServiceImpl" parent="appUserJdoService">
+	  <property name="companyService">
+	    <ref bean="companyService"/>
+	  </property>
+	
 	</bean>
-
-	<bean id="consultantAssignmentService"
-		class="com.silverquest.timesheets.service.impl.ConsultantAssignmentServiceImpl"
-		parent="consultantAssignmentJdoService" />
-
+	
+	<bean id="consultantAssignmentJdoService" class="com.silverquest.timesheets.jdo.service.impl.ConsultantAssignmentJdoServiceImpl"/>
+	
+	<bean id="consultantAssignmentService" class="com.silverquest.timesheets.service.impl.ConsultantAssignmentServiceImpl" parent="consultantAssignmentJdoService">
+	  <property name="companyService">
+	    <ref bean="companyService"/>
+	  </property>
+	  <property name="appUserService">
+	    <ref bean="appUserService"/>
+	  </property>
+	</bean>
+	
+	
 	<bean id="companyService"
-		class="com.silverquest.timesheets.service.impl.CompanyServiceImpl"
-		parent="companyJdoService">
-		<property name="appUserService">
-			<ref bean="appUserService" />
-		</property>
+	  class="com.silverquest.timesheets.service.impl.CompanyServiceImpl" parent="companyJdoService">
+	    <property name="appUserService">
+	      <ref bean="appUserService"/>
+	    </property>
 	</bean>
 
-	<bean id="timeSheetJdoService"
-		class="com.silverquest.timesheets.jdo.service.impl.TimeSheetJdoServiceImpl" />
+  	<bean id="timeSheetJdoService" 
+  	class="com.silverquest.timesheets.jdo.service.impl.TimeSheetJdoServiceImpl"/>
 
-	<bean id="timeSheetService"
-		class="com.silverquest.timesheets.service.impl.TimeSheetServiceImpl"
-		parent="timeSheetJdoService">
-		<property name="companyService">
-			<ref bean="companyService" />
-		</property>
-		<property name="consultantService">
-			<ref bean="consultantService" />
-		</property>
+	<bean id="timeSheetService" class="com.silverquest.timesheets.service.impl.TimeSheetServiceImpl" parent="timeSheetJdoService">
+	  <property name="companyService">
+	    <ref bean="companyService"/>
+	  </property>
+	  <property name="consultantService">
+	    <ref bean="consultantService"/>
+	  </property>
 	</bean>
-
-	<bean id="csvDataUploaderUtil"
-		class="com.silverquest.timesheets.service.util.impl.CSVDataUploaderUtilImpl" />
-		
+	
+	<bean id="csvDataUploaderUtil" class="com.silverquest.timesheets.service.util.impl.CSVDataUploaderUtilImpl"/>
+	
+	
 </beans>

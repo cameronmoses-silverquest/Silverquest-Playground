@@ -1,52 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+        xmlns:context="http://www.springframework.org/schema/context"
+        xmlns:mvc="http://www.springframework.org/schema/mvc"
+        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
         http://www.springframework.org/schema/context 
         http://www.springframework.org/schema/context/spring-context.xsd
         http://www.springframework.org/schema/mvc
 		http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd">
 
-	<context:component-scan base-package="com.silverquest.timesheets.controller" />
-	<context:component-scan base-package="com.silverquest.timesheets.service.impl" />
-	<context:component-scan base-package="com.silverquest.timesheets.jdo.service" />
 
-
-	<!-- Configures the @Controller programming model -->
-    <mvc:annotation-driven />
+		<context:component-scan base-package="com.silverquest.timesheets.service.impl" />
+	    <context:component-scan base-package="com.silverquest.timesheets.controller" />
+        <context:component-scan base-package="example.controllers" />
+        <context:component-scan base-package="com.silverquest.timesheets.jdo.service" />
+        
+       <!-- Configures the @Controller programming model -->
+       <mvc:annotation-driven />
 	 
-	<mvc:resources mapping="/resources/**" location="/resources/" />
+	   <mvc:resources mapping="/resources/**" location="/resources/" />
 	   
-	<bean id="landingController" class="com.silverquest.timesheets.controller.SimpleLandingPageController"/>
-	<bean id="adminController" class="com.silverquest.timesheets.controller.SimpleAdminController"/>
-	<bean id="timesheetController" class="com.silverquest.timesheets.controller.TimeSheetController"/>
-	
-	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-		p:prefix="/WEB-INF/views/" p:suffix=".jsp" />
+        <bean id="viewResolver"
+                class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+                p:prefix="/WEB-INF/views/" p:suffix=".jsp" />
+               
 
-	<bean id="multipartResolver" class="org.gmr.web.multipart.GMultipartResolver">
-		<!-- one of the properties available; the maximum file size in bytes -->
-		<property name="maxUploadSize" value="100000" />
-	</bean>
-	
-	<bean id="handlerMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
-        <property name="interceptors">
-            <list>
-                <ref bean="loginInterceptor"/>
-            </list>
-        </property>
-        <property name="mappings">
-            <props>
-            	<prop key="/index.htm">landingController</prop>
-                <prop key="/simple-landing/*">landingController</prop>
-                <prop key="/simple-admin/*">adminController</prop>
-                <prop key="/timesheets/*">timesheetController</prop>
-            </props>
-        </property>
-    </bean>
+		<bean id="multipartResolver"
+  		  class="org.gmr.web.multipart.GMultipartResolver">
 
-    <bean id="loginInterceptor" class="com.silverquest.timesheets.interceptor.LoginInterceptor"/>
+   		 <!-- one of the properties available; the maximum file size in bytes -->
+    <property name="maxUploadSize" value="100000"/></bean>
 </beans>
