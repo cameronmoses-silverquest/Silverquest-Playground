@@ -13,6 +13,12 @@
 	<context:component-scan base-package="com.silverquest.timesheets.service.impl" />
 	<context:component-scan base-package="com.silverquest.timesheets.jdo.service" />
 
+
+	<!-- Configures the @Controller programming model -->
+    <mvc:annotation-driven />
+	 
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+	   
 	<bean id="landingController" class="com.silverquest.timesheets.controller.SimpleLandingPageController"/>
 	<bean id="adminController" class="com.silverquest.timesheets.controller.SimpleAdminController"/>
 	<bean id="timesheetController" class="com.silverquest.timesheets.controller.TimeSheetController"/>
